@@ -1,51 +1,61 @@
-using NUnit.Framework;
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class UI : MonoBehaviour
 {
     [SerializeField] private SelectionManager selectionManager;
-    [SerializeField] private List<Squad> selectedSquads;
-    [SerializeField] private Transform squadCardPanel;
-    [SerializeField] private GameObject [] squadCards;
-    [SerializeField] private GameObject squadCardPrefab;
+    [SerializeField] private GameObject constructionMenu;
+    [SerializeField] private GameObject upgradeMenu;
 
-    public void VisualizeSquadChange()
+    [SerializeField] private UnityEvent MilitiaTowerButton;
+    [SerializeField] private UnityEvent RangersTowerButton;
+    [SerializeField] private UnityEvent MortarTowerButton;
+    [SerializeField] private UnityEvent SellTowerButton;
+
+    public void TowerSelectionMenu()
     {
+        constructionMenu.SetActive(false);
+        upgradeMenu.SetActive(false);
 
-        foreach (Squad squad in selectedSquads)
+        Vector2 menuPosition = Input.mousePosition;
+
+        if (!selectionManager.selectedTower.spawned)
         {
-            for (int i = 0; i < squad.transform.childCount; i++)
-            {
-                if (squad.transform.GetChild(i).gameObject.activeInHierarchy)
-                {
-                    squad.transform.GetChild(i).GetChild(0).gameObject.SetActive(false);
-                }
-            }
+            constructionMenu.SetActive(true);
+            constructionMenu.GetComponent<RectTransform>().position = menuPosition;
+        }
+        else
+        {
+            upgradeMenu.SetActive(true);
+            upgradeMenu.GetComponent<RectTransform>().position = menuPosition;
         }
 
-        for(int i = 0; i < squadCards.Length; i++)
-        {
-            Destroy(squadCards[i]);
-        }
+    }
 
-        selectedSquads = selectionManager.GetSelectedSquads();
+    public void InteractedWithUI()
+    {
+        constructionMenu.SetActive(false);
+        upgradeMenu.SetActive(false);
+    }
 
-        foreach (Squad squad in selectedSquads)
-        {
-            for (int i = 0; i < squad.transform.childCount; i++)
-            {
-                if(squad.transform.GetChild(i).gameObject.activeInHierarchy)
-                {
-                    squad.transform.GetChild(i).GetChild(0).gameObject.SetActive(true);
-                }
-            }
-        }
-        squadCards = new GameObject[selectedSquads.Count];
-        for(int i = 0; i < selectedSquads.Count; i++)
-        {
-            squadCards[i] = Instantiate(squadCardPrefab, squadCardPanel);
-            squadCards[i] = transform.GetChild(0).GetComponent<Image>().fillAmount = selectedSquads[i].GetHealthPercentage();
-        }
+
+    public void MilitiaTowerSelected()
+    {
+        MilitiaTowerButton.Invoke();
+    }
+
+    public void RangersTowerSelected()
+    {
+        RangersTowerButton.Invoke();
+    }
+
+    public void MortarTowerSelected()
+    {
+        MortarTowerButton.Invoke();
+    }
+
+    public void SellTowerSelected()
+    {
+        SellTowerButton.Invoke();
     }
 }

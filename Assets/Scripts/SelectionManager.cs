@@ -1,55 +1,74 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Events;
+
 public class SelectionManager : MonoBehaviour
 {
-    [SerializeField] private List<Squad> selectedSquads;
-    [SerializeField] private float maxDistance;
-    [SerializeField] private LayerMask layerMask;
-    [SerializeField] private UnityEvent OnSelectedChange;
-    public void Update()
+    public TowerLocation selectedTower;
+
+    [SerializeField] private LayerMask towerLayerMask;
+
+    [SerializeField] private UnityEvent clickedOnTower;
+    [SerializeField] private UnityEvent clickedOnNothing;      // NUEVO: cierra el menu al hacer click fuera
+    [SerializeField] private UnityEvent interactedWithTower;
+
+    // Indice = valor del enum TowerType: [0] None (dejar vacio), [1] Militia, [2] Rangers, [3] Mortar
+    public GameObject[] towerPrefabs;
+
+    private void Update()
     {
-        if (!Input.GetMouseButtonDown(0)) { return; }
-        // Empieza haciendole click izquierdo
+        if (!Input.GetMouseButtonDown(0)) return;
+
+        // NUEVO: ignorar clicks que caen sobre botones/paneles de UI
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(ray, out hitInfo, 100f, towerLayerMask))
         {
-            //empieza si el raycast detecta algo
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit info;
+            // CAMBIO: GetComponentInParent por si el collider esta en un hijo
+            TowerLocation location = hitInfo.collider.GetComponentInParent<TowerLocation>();
+            if (location == null) return;
 
-            if (Physics.Raycast(ray.origin, ray.direction, out info, maxDistance, layerMask))
-            {
-                if (Input.GetKey(KeyCode.LeftShift))
-                {
-                    TryAddSquad(info.transform.GetComponentInParent<Squad>());
-                }
-                else
-                {
-                    selectedSquads.Clear();
-
-                    TryAddSquad(info.transform.GetComponentInParent<Squad>());
-                }
-
-            }
-
-            else
-            {
-                selectedSquads.Clear();
-            }
+            selectedTower = location;
+            clickedOnTower.Invoke();
         }
-
+        else
+        {
+            selectedTower = null;
+            clickedOnNothing.Invoke();
+        }
     }
 
-    //alch no se que hace nomas hago caso
-    private void TryAddSquad(Squad attemptSquad)
+    public void SpawnTower(int newInt)
     {
-        if (selectedSquads.Contains(attemptSquad)) { return; }
+        if (selectedTower == null || selectedTower.spawned) return;   // NUEVO: validaciones
+        if (newInt < 1 || newInt >= towerPrefabs.Length) return;
 
-        selectedSquads.Add(attemptSquad);
-        OnSelectedChange.Invoke();
+        selectedTower.towerType = (TowerType)newInt;
+        selectedTower.spawned = true;
+
+        GameObject tower = Instantiate(towerPrefabs[newInt], selectedTower.transform);
+        tower.transform.localPosition = Vector3.zero;
+        tower.transform.localRotation = Quaternion.identity;
+        selectedTower.towerReference = tower;
+
+        selectedTower.transform.GetChild(0).gameObject.SetActive(false);
+
+        interactedWithTower.Invoke();
     }
 
-    public List<Squad> GetSelectedSquads()
+    public void SellTower()
     {
-        return new List<Squad>(selectedSquads);
+        if (selectedTower == null || !selectedTower.spawned) return;   // NUEVO
+
+        selectedTower.towerType = TowerType.None;
+        selectedTower.spawned = false;
+
+        selectedTower.transform.GetChild(0).gameObject.SetActive(true);
+        Destroy(selectedTower.towerReference);
+
+        interactedWithTower.Invoke();
     }
 }
