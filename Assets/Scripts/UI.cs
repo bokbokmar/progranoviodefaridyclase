@@ -11,6 +11,7 @@ public class UI : MonoBehaviour
     [SerializeField] private UnityEvent RangersTowerButton;
     [SerializeField] private UnityEvent MortarTowerButton;
     [SerializeField] private UnityEvent SellTowerButton;
+    [SerializeField] private GameObject joystickParent;
 
     public void TowerSelectionMenu()
     {
@@ -57,5 +58,18 @@ public class UI : MonoBehaviour
     public void SellTowerSelected()
     {
         SellTowerButton.Invoke();
+    }
+
+    private void Awake()
+    {
+        //if (SystemInfo.deviceType == DeviceType.Desktop)
+        //{
+        //    joystickParent.SetActive(false);
+        //}
+        //else if (SystemInfo.deviceType == DeviceType.Handheld)
+        //{ 
+        //joystickParent.SetActive(true);
+        //}
+
     }
 }

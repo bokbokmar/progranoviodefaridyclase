@@ -1,16 +1,14 @@
 using System.Collections;
 using UnityEngine;
-
-// Soldado de la torre Militia: se queda en su posicion y ataca cuerpo a cuerpo a los enemigos cercanos
 public class AllySoldier : MonoBehaviour, ITargeter
 {
-    public Vector3 targetPosition;   // posicion de guardia (la asigna MilitiaTower)
+    public Vector3 targetPosition;  
     [SerializeField] private float movementSpeed = 3f;
 
     [Header("Melee")]
     [SerializeField] private float attackRange = 1f;
     [SerializeField] private float attackCooldown = 1f;
-    [SerializeField] private float leashRadius = 4f;   // distancia maxima que se aleja de su posicion
+    [SerializeField] private float leashRadius = 4f;  
 
     [field: SerializeField] public LayerMask TargetLayerMask { get; set; }
     [field: SerializeField] public float DetectionRadius { get; set; }
@@ -28,7 +26,7 @@ public class AllySoldier : MonoBehaviour, ITargeter
 
     private void Update()
     {
-        if (AttackCoroutine != null) return;   // esta persiguiendo / atacando
+        if (AttackCoroutine != null) return; 
 
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, movementSpeed * Time.deltaTime);
 
@@ -50,7 +48,7 @@ public class AllySoldier : MonoBehaviour, ITargeter
 
         while (target.CurrentTransform.gameObject.activeInHierarchy)
         {
-            // No alejarse demasiado de la posicion de guardia
+             
             if (Vector3.Distance(transform.position, targetPosition) > leashRadius) break;
 
             Vector3 enemyPosition = target.CurrentTransform.position;
