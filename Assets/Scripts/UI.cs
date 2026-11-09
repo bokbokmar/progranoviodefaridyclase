@@ -67,8 +67,8 @@ public class UI : MonoBehaviour
         //    joystickParent.SetActive(false);
         //}
         //else if (SystemInfo.deviceType == DeviceType.Handheld)
-        //{ 
-        //joystickParent.SetActive(true);
+        //{
+        //    joystickParent.SetActive(true);
         //}
 
     }
