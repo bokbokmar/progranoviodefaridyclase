@@ -1,0 +1,24 @@
+{
+  "Text Keys": [
+    {
+      "text_key": "play",
+      "en": "Play",
+      "es": "Jugar"
+    },
+    {
+      "text_key": "settings",
+      "en": "Settings",
+      "es": "Opciones"
+    },
+    {
+      "text_key": "spanish",
+      "en": "Spanish",
+      "es": "Español"
+    },
+    {
+      "text_key": "english",
+      "en": "English",
+      "es": "Inglés"
+    }
+  ]
+}
