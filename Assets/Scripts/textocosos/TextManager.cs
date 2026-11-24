@@ -1,8 +1,7 @@
-using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
-using UnityEngine;
 
 public class TextManagerr : MonoBehaviour
 {
@@ -15,7 +14,7 @@ public class TextManagerr : MonoBehaviour
     [SerializeField] private TextAsset textJSON;
     private TextReferenceWopper wopper;
 
-   
+
     private Dictionary<string, string> textDictionary = new Dictionary<string, string>();
 
     public HashSet<ITranscoso> transcosos = new HashSet<ITranscoso>();
@@ -29,8 +28,10 @@ public class TextManagerr : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            ChangeLanguage(currentLanguage);
         }
     }
+
     public void ChangeLanguage(Language language)
     {
         currentLanguage = language;
@@ -39,10 +40,10 @@ public class TextManagerr : MonoBehaviour
         switch (language)
         {
             case Language.en:
-            {
+                {
                     textDictionary = wopper.texts.DistinctBy(item => item.text_key).ToDictionary(item => item.text_key, item => item.en);
                     break;
-            }
+                }
             case Language.es:
                 {
                     textDictionary = wopper.texts.DistinctBy(item => item.text_key).ToDictionary(item => item.text_key, item => item.es);
@@ -55,15 +56,15 @@ public class TextManagerr : MonoBehaviour
 
     public void TranslateTranslatable()
     {
-        foreach(ITranscoso transcoso in transcosos)
+        foreach (ITranscoso transcoso in transcosos)
         {
             transcoso.TranslatableText.text = GetText(transcoso.TextID);
         }
     }
-    public string GetText (string searchedKey)
+    public string GetText(string searchedKey)
     {
         string text;
-        if(textDictionary.TryGetValue(searchedKey, out text))
+        if (textDictionary.TryGetValue(searchedKey, out text))
         {
             text = textDictionary[searchedKey];
         }
@@ -75,11 +76,13 @@ public class TextManagerr : MonoBehaviour
     }
 }
 
-
+[System.Serializable]
 public class TextReferenceWopper
 {
     public TextReference[] texts;
 }
+
+[System.Serializable]
 public class TextReference
 {
     public string text_key;

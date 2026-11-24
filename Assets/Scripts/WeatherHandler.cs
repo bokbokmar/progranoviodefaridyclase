@@ -21,10 +21,32 @@ public class WeatherHandler : MonoBehaviour
     [SerializeField] private UnitType units;
     private void Awake()
     {
+        
+    }
+
+    [SerializeField] private GameObject Panel;
+    public void MexicoSelected()
+    {
+        latitude = 23.634501f; longitude = -102.552784f;
+        url = $"https://api.openweathermap.org/data/4.0/onecall/current?lat={latitude}&lon={longitude}&appid={key}&units={units}";
+        StartCoroutine(RetrieveWeather());
+        Panel.SetActive(false);
+        
+    }
+    public void ReinoUnidoSelected()
+    {
+        latitude = 55.378051f; longitude = -3.435973f;
+        Panel.SetActive(false);
         url = $"https://api.openweathermap.org/data/4.0/onecall/current?lat={latitude}&lon={longitude}&appid={key}&units={units}";
         StartCoroutine(RetrieveWeather());
     }
-
+    public void ChinaSelected()
+    {
+        latitude = 35.86166f; longitude = 104.195397f;
+        Panel.SetActive(false);
+        url = $"https://api.openweathermap.org/data/4.0/onecall/current?lat={latitude}&lon={longitude}&appid={key}&units={units}";
+        StartCoroutine(RetrieveWeather());
+    }
     private IEnumerator RetrieveWeather()
     {
         UnityWebRequest request = new UnityWebRequest(url);
